@@ -59,6 +59,7 @@ def move_negation_inwards(expression):
 
 def standardize_scope(expression):
     parts = expression.split("∧")
+    standardized = []
     current_var = "x"
     q = [] # quantifiers
     v = [] # variables
@@ -70,22 +71,23 @@ def standardize_scope(expression):
         elif "∃" in part:
             variable = current_var
             current_var = chr(ord(current_var) + 1)
+            standardized.append(f"∃{current_var}p({current_var})")
             q.append(f"∃{variable}")
             v.append(f"p({current_var})")
 
     total1 = " ∧ ".join(v)
-    total = " ".join(q) + " ∧ " + total1
+    total = " ".join(q) + total1
     return total
 
 def resolution_procedure(expression):
     expression = eliminate_implication(expression)
     expression = demorgans_law(expression)
     expression = move_negation_inwards(expression)
-    # expression = standardize_scope(expression)
+    expression = standardize_scope(expression)
     return expression
 
 
 # Test the resolution_procedure function
-expression = "P -> Q"
+expression = "∀x (p(x) ∧ q(x)) ∧ ∃y (r(y) ∧ s(y))"
 result = resolution_procedure(expression)
-print(result)  # Expected output: "(not P) or Q"
+print(result)
